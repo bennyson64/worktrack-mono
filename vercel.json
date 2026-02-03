@@ -1,5 +1,6 @@
 {
-  "buildCommand": "pnpm build:all",
+  "installCommand": "pnpm install",
+  "buildCommand": "turbo build",
   "functions": {
     "apps/server/dist/index.js": {
       "runtime": "nodejs20.x"
