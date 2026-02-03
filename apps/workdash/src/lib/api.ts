@@ -1,6 +1,6 @@
 import type { Work } from "@repo/shared"
 
-const API_URL = "https://mono-repo-server.vercel.app/"
+const API_URL = "https://worktrack-mono-server.vercel.app/"
 
 export const fetchWorks = async (): Promise<Work[]> => {
   const res = await fetch(API_URL)
