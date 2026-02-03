@@ -1,6 +1,6 @@
 {
   "functions": {
-    "dist/index.js": {
+    "api/**/*.ts": {
       "runtime": "nodejs18.18.0"
     }
   }
