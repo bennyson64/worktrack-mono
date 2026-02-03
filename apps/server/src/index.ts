@@ -5,7 +5,6 @@ import { db } from "./db";
 import { works } from "./db/schema";
 import { eq } from "drizzle-orm";
 import { Work } from "@repo/shared";
-// import { serve } from "@hono/node-server";
 
 const app = new Hono();
 
@@ -21,82 +20,43 @@ app.use(
   })
 );
 
-app.options("*", (c) => c.body(null, 204));
-
-/* ============================
-   GET all works
-============================ */
+/* Routes */
 app.get("/", async (c) => {
   const result = await db.select().from(works);
   return c.json(result);
 });
 
-/* ============================
-   ADD work
-============================ */
 app.post("/add", async (c) => {
   const { title, status } = (await c.req.json()) as Partial<Work>;
-
   if (!title || !status) {
     return c.json({ message: "Invalid data" }, 400);
   }
-
-  const [work] = await db
-    .insert(works)
-    .values({
-      title,
-      status,
-    })
-    .returning();
-
+  const [work] = await db.insert(works).values({ title, status }).returning();
   return c.json(work, 201);
 });
 
-/* ============================
-   UPDATE work
-============================ */
 app.patch("/update/:id", async (c) => {
   const id = c.req.param("id");
   const updates = await c.req.json();
-
   const [updated] = await db
     .update(works)
     .set(updates)
     .where(eq(works.id, id))
     .returning();
 
-  if (!updated) {
-    return c.json({ message: "Not found" }, 404);
-  }
-
+  if (!updated) return c.json({ message: "Not found" }, 404);
   return c.json(updated);
 });
 
-/* ============================
-   DELETE work
-============================ */
 app.delete("/delete/:id", async (c) => {
   const id = c.req.param("id");
-
   await db.delete(works).where(eq(works.id, id));
   return c.body(null, 204);
 });
 
-/* ============================
-   Vercel handlers
-============================ */
+/* Vercel exports */
 export const GET = handle(app);
 export const POST = handle(app);
 export const PATCH = handle(app);
 export const DELETE = handle(app);
 export const OPTIONS = handle(app);
-
-// serve(
-//   {
-//     fetch: app.fetch,
-//     port: 3000,
-//   },
-//   (info) => {
-//     console.log(`🚀 Hono running at http://localhost:${info.port}`);
-//   }
-// );
