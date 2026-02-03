@@ -8,7 +8,6 @@ import { Work } from "@repo/shared";
 
 const app = new Hono();
 
-/* ✅ CORS */
 app.use(
   "*",
   cors({
@@ -21,9 +20,6 @@ app.use(
   })
 );
 
-/* ✅ Preflight — MUST be before routes */
-app.options("*", (c) => c.body(null, 204));
-
 /* Routes */
 app.get("/", async (c) => {
   const result = await db.select().from(works);
@@ -35,7 +31,6 @@ app.post("/add", async (c) => {
   if (!title || !status) {
     return c.json({ message: "Invalid data" }, 400);
   }
-
   const [work] = await db.insert(works).values({ title, status }).returning();
   return c.json(work, 201);
 });
@@ -43,7 +38,6 @@ app.post("/add", async (c) => {
 app.patch("/update/:id", async (c) => {
   const id = c.req.param("id");
   const updates = await c.req.json();
-
   const [updated] = await db
     .update(works)
     .set(updates)
@@ -60,5 +54,9 @@ app.delete("/delete/:id", async (c) => {
   return c.body(null, 204);
 });
 
-/* ✅ SINGLE export for Vercel */
-export default handle(app);
+/* Vercel exports */
+export const GET = handle(app);
+export const POST = handle(app);
+export const PATCH = handle(app);
+export const DELETE = handle(app);
+export const OPTIONS = handle(app);
