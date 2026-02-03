@@ -1,6 +1,7 @@
 {
+  "buildCommand": "pnpm build:all",
   "functions": {
-    "api/**/*.ts": {
+    "apps/server/dist/index.js": {
       "runtime": "nodejs20.x"
     }
   }
