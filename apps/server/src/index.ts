@@ -1,61 +1,92 @@
-import { Hono } from "hono"
-import { cors } from "hono/cors"
+import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { handle } from "hono/vercel";
+import { db } from "./db";
+import { works } from "./db/schema";
+import { eq } from "drizzle-orm";
 import { Work } from "@repo/shared";
-const app = new Hono()
 
+const app = new Hono();
 
-// Initialize works array to store work items
-let works: Work[] = []
+app.use(
+  "*",
+  cors({
+    origin: [
+      "*",
+      "http://localhost:5173",
+      "https://worktrack-mono-workdash.vercel.app",
+    ],
+    allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type"],
+  })
+);
 
-app.use('*', cors({
-  origin: ['*','http://localhost:5173','https://worktrack-mono-workdash.vercel.app/','https://worktrack-mono-workdash.vercel.app'], 
-  allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type'],
-}))
+app.options("*", (c) => c.body(null, 204));
 
-app.options('*', (c) => {
-  return c.body(null, 204)
-})
+/* ============================
+   GET all works
+============================ */
+app.get("/", async (c) => {
+  const result = await db.select().from(works);
+  return c.json(result);
+});
 
-
-
-app.get("/", (c) => c.json(works))
-
+/* ============================
+   ADD work
+============================ */
 app.post("/add", async (c) => {
-  const { title, status } = await c.req.json()
-  if (!title || !status) return c.json({ message: "Invalid data" }, 400)
+  const { title, status } = (await c.req.json()) as Partial<Work>;
 
-  const work = {
-    id: crypto.randomUUID(),
-    title,
-    status,
-    createdAt: new Date().toISOString(),
+  if (!title || !status) {
+    return c.json({ message: "Invalid data" }, 400);
   }
 
-  works.push(work)
-  return c.json(work, 201)
-})
+  const [work] = await db
+    .insert(works)
+    .values({
+      title,
+      status,
+    })
+    .returning();
 
+  return c.json(work, 201);
+});
+
+/* ============================
+   UPDATE work
+============================ */
 app.patch("/update/:id", async (c) => {
-  const id = c.req.param("id")
-  const updates = await c.req.json()
+  const id = c.req.param("id");
+  const updates = await c.req.json();
 
-  const work = works.find(w => w.id === id)
-  if (!work) return c.json({ message: "Not found" }, 404)
+  const [updated] = await db
+    .update(works)
+    .set(updates)
+    .where(eq(works.id, id))
+    .returning();
 
-  Object.assign(work, updates)
-  return c.json(work)
-})
+  if (!updated) {
+    return c.json({ message: "Not found" }, 404);
+  }
 
-app.delete("/delete/:id", (c) => {
-  const id = c.req.param("id")
-  works = works.filter(w => w.id !== id)
-  return c.body(null, 204)
-})
+  return c.json(updated);
+});
 
-export const GET = handle(app)
-export const POST = handle(app)
-export const PATCH = handle(app)
-export const DELETE = handle(app)
-export const OPTIONS = handle(app)
+/* ============================
+   DELETE work
+============================ */
+app.delete("/delete/:id", async (c) => {
+  const id = c.req.param("id");
+
+  await db.delete(works).where(eq(works.id, id));
+  return c.body(null, 204);
+});
+
+/* ============================
+   Vercel handlers
+============================ */
+export const GET = handle(app);
+export const POST = handle(app);
+export const PATCH = handle(app);
+export const DELETE = handle(app);
+export const OPTIONS = handle(app);
