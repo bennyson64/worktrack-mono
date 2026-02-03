@@ -1,0 +1,17 @@
+{
+  "name": "workdash-monorepo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev:all": "turbo dev",
+    "build:all": "turbo build",
+    "test:all": "turbo test"
+  },
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.28.2",
+  "devDependencies": {
+    "turbo": "^2.8.1"
+  }
+}
