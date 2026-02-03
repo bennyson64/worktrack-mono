@@ -5,6 +5,7 @@ import { db } from "./db";
 import { works } from "./db/schema";
 import { eq } from "drizzle-orm";
 import { Work } from "@repo/shared";
+// import { serve } from "@hono/node-server";
 
 const app = new Hono();
 
@@ -12,7 +13,6 @@ app.use(
   "*",
   cors({
     origin: [
-      "*",
       "http://localhost:5173",
       "https://worktrack-mono-workdash.vercel.app",
     ],
@@ -90,3 +90,13 @@ export const POST = handle(app);
 export const PATCH = handle(app);
 export const DELETE = handle(app);
 export const OPTIONS = handle(app);
+
+// serve(
+//   {
+//     fetch: app.fetch,
+//     port: 3000,
+//   },
+//   (info) => {
+//     console.log(`🚀 Hono running at http://localhost:${info.port}`);
+//   }
+// );
