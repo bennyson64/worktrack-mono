@@ -5,8 +5,25 @@
       "cache": false,
       "persistent": true,
       "outputs": [],
-      "dependsOn": ["^dev"]
+      "dependsOn": ["^dev"],
+      "env": [
+        "DATABASE_URL",
+        "SUPABASE_URL",
+        "SUPABASE_ANON_KEY",
+        "NODE_ENV"
+      ]
     },
-    "build": { "dependsOn": ["^build"], "outputs": ["dist/**"] }
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"],
+      "env": [
+        "DATABASE_URL",
+        "SUPABASE_URL",
+        "SUPABASE_ANON_KEY",
+        "NODE_ENV"
+      ]
+    }
   }
 }
+
+
