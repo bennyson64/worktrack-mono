@@ -55,4 +55,8 @@ app.delete("/delete/:id", async (c) => {
 });
 
 /* Vercel exports */
-export default app;
+export const GET = handle(app);
+export const POST = handle(app);
+export const PATCH = handle(app);
+export const DELETE = handle(app);
+export const OPTIONS = handle(app);
