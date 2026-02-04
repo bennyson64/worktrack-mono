@@ -17,7 +17,7 @@ app.use(
     ],
     allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type"],
-  })
+  }),
 );
 
 /* Routes */
@@ -60,3 +60,5 @@ export const POST = handle(app);
 export const PATCH = handle(app);
 export const DELETE = handle(app);
 export const OPTIONS = handle(app);
+
+export default app;
