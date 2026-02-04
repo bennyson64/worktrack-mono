@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { handle } from "hono/vercel";
 import { db } from "./db/index.js";
-import { works } from "./db/schema.js";
+import { works } from "./db/schema/index.js";
 import { eq } from "drizzle-orm";
 import { Work } from "@repo/shared";
 
