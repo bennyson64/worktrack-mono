@@ -5,7 +5,7 @@
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "dev": "tsx watch src/index.ts",
-    "build": "tsc --noEmit false --outDir dist",
+    "build": "tsc",
     "start": "node dist/api/index.js"
   },
   "dependencies": {
