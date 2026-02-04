@@ -14,6 +14,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://worktrack-mono-workdash.vercel.app",
+      "https://worktrack-mono-workdash-a0cszj949-bennys-projects-93b36371.vercel.app",
     ],
     allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type"],
